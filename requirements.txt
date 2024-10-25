@@ -1,0 +1,5 @@
+hugchat
+python-dotenv
+pyttsx3
+SpeechRecognition
+pygame
