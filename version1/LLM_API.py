@@ -6,7 +6,6 @@ from hugchat.login import Login
 class LLM:
 
     def __init__(self):
-
         secrets = dotenv_values("hf.env")
         email = secrets["EMAIL"]
         passwd = secrets["PASS"]
@@ -17,3 +16,8 @@ class LLM:
 
         # create chatbot/assign HF API
         self.brain = hugchat.ChatBot(cookies=self.cookies.get_dict())
+
+    # gets the answer from the API
+    def generate_answer(self, user_input):
+        answer = self.brain.chat(user_input)
+        return answer

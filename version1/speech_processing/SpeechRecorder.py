@@ -8,8 +8,8 @@ class SpeechRecorder:
         self.record_speech = speech_recognition.Recognizer()
         self.record_speech.dynamic_energy_threshold = True
 
-    # function that records and processes user's spoken input, returns the input
-    def speech_input(self):
+    # function that records and processes user's spoken input, returns the input as a String
+    def process_speech_input(self):
         with speech_recognition.Microphone() as source:
             self.record_speech.adjust_for_ambient_noise(source)
             recording = self.record_speech.listen(source)

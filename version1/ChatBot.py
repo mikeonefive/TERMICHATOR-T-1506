@@ -18,11 +18,11 @@ class ChatBot:
 
         self.quit_commands = ChatbotCommands().get_quit_commands()
 
-        # initialize speech module
-        self.speech = SpeechModule().speech
+        # initialize speech module for voice output
+        self.speech = SpeechModule()
 
-        # initialize input for speech recognition
-        self.record_user_speech_input = SpeechRecorder().record_speech
+        # initialize speech recognition
+        self.speech_recorder = SpeechRecorder()
 
         self.user_input = None
 
@@ -45,32 +45,6 @@ class ChatBot:
             # get images from spritesheet and append them to a list
             self.animation_list.append(self.get_image(self.mouth_images, image, 49, 46))
             self.main_window.screen.blit(self.animation_list[self.frame], (360, 128))
-
-    def generate_answer(self, user_input):
-        answer = self.llm.brain.chat(user_input)
-        return answer
-
-    # function that records and processes user's spoken input, returns the input
-    def speech_input(self):
-        with speech_recognition.Microphone() as source:
-            self.record_user_speech_input.adjust_for_ambient_noise(source)
-            recording = self.record_user_speech_input.listen(source)
-        try:
-            self.user_input = self.record_user_speech_input.recognize_google(recording)
-            print(self.user_input)
-
-        except speech_recognition.UnknownValueError:
-            # print("Error: Google Speech Recognition could not understand audio")
-            return None  # "no input or input not recognized"
-
-        except speech_recognition.RequestError as error:
-            sys.exit("Could not request results from Google Speech Recognition service; {0}".format(error))
-
-        return self.user_input
-
-    def speech_output(self, input_to_speak):
-        self.speech.say(input_to_speak)
-        self.speech.runAndWait()
 
     def update_animations(self, is_speaking, is_listening):
         # update animation, if more than 100ms have passed move on to next frame

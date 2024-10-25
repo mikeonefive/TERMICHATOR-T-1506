@@ -9,3 +9,6 @@ class SpeechModule:
         voices = self.speech.getProperty('voices')
         self.speech.setProperty('voice', voices[0].id)
 
+    def speak_text(self, input_to_speak):
+        self.speech.say(input_to_speak)
+        self.speech.runAndWait()
