@@ -1,10 +1,11 @@
-from Requirements import *
-
 from graphics.MainWindow import MainWindow
+
+import pygame
 
 from ChatbotCommands import *
 
 from LLM_API import LLM
+
 from speech_processing.SpeechModule import SpeechModule
 from speech_processing.SpeechRecorder import SpeechRecorder
 

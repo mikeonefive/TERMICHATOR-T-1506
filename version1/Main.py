@@ -1,5 +1,5 @@
 from ChatBot import ChatBot
-from Requirements import *
+from Requirements import time, sys, pygame, threading, ThreadPoolExecutor
 
 
 def main():
