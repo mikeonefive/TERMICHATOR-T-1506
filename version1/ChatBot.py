@@ -1,26 +1,29 @@
-from graphics.MainWindow import MainWindow
+from gui.MainWindow import MainWindow
 
 import pygame
 
-from ChatbotCommands import *
-
 from LLM_API import LLM
 
-from speech_processing.SpeechModule import SpeechModule
+from speech_processing.SpeechOutput import SpeechOutput
 from speech_processing.SpeechRecorder import SpeechRecorder
 
 
 class ChatBot:
 
-    def __init__(self):
+    def __init__(self) -> None:
+
+        # default messages & quit command list
+        self.greeting_message = "Hi, how are you? What can I do for you?"
+        self.goodbye_message = "Nice talking to you. See you next time."
+        self.waiting_message = "Hold on a second, I'll consult my database"
+        self.followup_question = "What else can I do for you?"
+        self.quit_commands = ["quit", "exit", "bye", "goodbye", "terminate", "see you"]
 
         # initialize connection to LLM
         self.llm = LLM()
 
-        self.quit_commands = ChatbotCommands().get_quit_commands()
-
         # initialize speech module for voice output
-        self.speech = SpeechModule()
+        self.speech_output = SpeechOutput()
 
         # initialize speech recognition
         self.speech_recorder = SpeechRecorder()
@@ -47,7 +50,7 @@ class ChatBot:
             self.animation_list.append(self.get_image(self.mouth_images, image, 49, 46))
             self.main_window.screen.blit(self.animation_list[self.frame], (360, 128))
 
-    def update_animations(self, is_speaking, is_listening):
+    def update_animations(self, is_speaking, is_listening) -> None:
         # update animation, if more than 100ms have passed move on to next frame
         current_time = pygame.time.get_ticks()
         if current_time - self.last_update >= self.animation_cooldown:

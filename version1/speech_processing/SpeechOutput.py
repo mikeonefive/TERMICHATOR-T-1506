@@ -1,14 +1,14 @@
 import pyttsx3
 
 
-class SpeechModule:
+class SpeechOutput:
 
-    def __init__(self):
+    def __init__(self) -> None:
         # initialize voice and set voice properties
         self.speech = pyttsx3.init()
         voices = self.speech.getProperty('voices')
         self.speech.setProperty('voice', voices[0].id)
 
-    def speak_text(self, input_to_speak):
+    def say(self, input_to_speak) -> None:
         self.speech.say(input_to_speak)
         self.speech.runAndWait()

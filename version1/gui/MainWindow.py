@@ -4,7 +4,7 @@ import pygame
 
 class MainWindow:
 
-    def __init__(self):
+    def __init__(self) -> None:
         # initialize pygame so you can use font and display graphics
         pygame.init()
 

@@ -4,7 +4,7 @@ import sys
 
 class SpeechRecorder:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.record_speech = speech_recognition.Recognizer()
         self.record_speech.dynamic_energy_threshold = True
 

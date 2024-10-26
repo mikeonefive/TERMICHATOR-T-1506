@@ -2,13 +2,14 @@ from ChatBot import ChatBot
 from Requirements import time, sys, pygame, threading, ThreadPoolExecutor
 
 
-def main():
+def main() -> None:
 
-    # TODO instead of only the bot, initialize the separate modules here
+    # TODO instead of only the bot, initialize the separate modules here???
+    # TODO separate GUI from chatbot class
     bot = ChatBot()
 
-    thread_speech = threading.Thread(target=bot.speech.speak_text,
-                                     args=("Hi, how are you? What can I do for you?",), daemon=True)
+    thread_speech = threading.Thread(target=bot.speech_output.say,
+                                     args=(bot.greeting_message,), daemon=True)
     thread_speech.start()
 
     thread_speech_input = None
@@ -55,8 +56,8 @@ def main():
                     current_state = "STATE_GENERATE_ANSWER_START"
 
             case "STATE_GENERATE_ANSWER_START":
-                thread_speech = threading.Thread(target=bot.speech.speak_text,
-                                                 args=("Hold on a second, I'll consult my database",), daemon=True)
+                thread_speech = threading.Thread(target=bot.speech_output.say,
+                                                 args=(bot.waiting_message,), daemon=True)
                 thread_speech.start()
                 thread_generate_answer = executor.submit(bot.llm.generate_answer, user_input)
                 current_state = "STATE_GENERATE_ANSWER"
@@ -68,7 +69,7 @@ def main():
 
             case "STATE_SPEECH_OUTPUT_START":
                 if not is_speaking:
-                    thread_speech = threading.Thread(target=bot.speech.speak_text, args=(answer,), daemon=True)
+                    thread_speech = threading.Thread(target=bot.speech_output.say, args=(answer,), daemon=True)
                     thread_speech.start()
                     current_state = "STATE_SPEECH_OUTPUT_NEXT_QUESTION"
 
@@ -78,8 +79,8 @@ def main():
 
             case "STATE_SPEECH_OUTPUT_NEXT_QUESTION":
                 if not is_speaking:
-                    thread_speech = threading.Thread(target=bot.speech.speak_text,
-                                                     args=("What else can I do for you?",), daemon=True)
+                    thread_speech = threading.Thread(target=bot.speech_output.say,
+                                                     args=(bot.followup_question,), daemon=True)
                     thread_speech.start()
                     current_state = "STATE_SPEECH_INPUT_START"
 
@@ -91,8 +92,8 @@ def main():
                                                          args=(is_speaking, False), daemon=True)
                     thread_animations.start()
 
-                    thread_speech = threading.Thread(target=bot.speech.speak_text,
-                                                     args=("Nice talking to you. See you next time.",), daemon=True)
+                    thread_speech = threading.Thread(target=bot.speech_output.say,
+                                                     args=(bot.goodbye_message,), daemon=True)
                     thread_speech.start()
                 current_state = "STATE_QUIT"
 
