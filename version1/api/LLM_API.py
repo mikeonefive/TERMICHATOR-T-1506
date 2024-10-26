@@ -1,3 +1,5 @@
+import os
+
 from dotenv import dotenv_values
 from hugchat import hugchat
 from hugchat.login import Login
@@ -6,7 +8,10 @@ from hugchat.login import Login
 class LLM:
 
     def __init__(self):
-        secrets = dotenv_values("hf.env")
+        # secrets = dotenv_values("hf.env") if the file is located in current working directory
+        # get the absolute path to hf.env based on the script's location
+        env_path = os.path.join(os.path.dirname(__file__), "hf.env")
+        secrets = dotenv_values(env_path)
         email = secrets["EMAIL"]
         passwd = secrets["PASS"]
 

@@ -1,12 +1,17 @@
-from ChatBot import ChatBot
 from Requirements import time, sys, pygame, threading, ThreadPoolExecutor
+
+from gui.MainWindow import MainWindow
+from gui.Animations import Animations
+from ChatBot import ChatBot
 
 
 def main() -> None:
 
-    # TODO instead of only the bot, initialize the separate modules here???
-    # TODO separate GUI from chatbot class
-    bot = ChatBot()
+    main_window = MainWindow()              # initialize pygame, main window, and display background picture
+
+    animations = Animations(main_window)    # everything that has to do with mouth animations
+
+    bot = ChatBot()                         # includes speech analysis, speech output and the LLM
 
     thread_speech = threading.Thread(target=bot.speech_output.say,
                                      args=(bot.greeting_message,), daemon=True)
@@ -15,18 +20,19 @@ def main() -> None:
     thread_speech_input = None
     thread_generate_answer = None
 
-    is_speaking = True
     user_input = None
     answer = None
 
-    running = True
-    bot.update_animations(is_speaking, False)
+    is_speaking = True
+    is_listening = False
+    is_running = True
+    animations.update_animations(is_speaking, is_listening)
 
     executor = ThreadPoolExecutor()
 
     current_state = "STATE_SPEECH_INPUT_START"
 
-    while running:
+    while is_running:
 
         # if user closes window, terminate program
         for event in pygame.event.get():
@@ -75,7 +81,7 @@ def main() -> None:
 
                     # time it took to find answer to the questions
                     seconds = round(time.time() - start_time)
-                    print(seconds, "seconds")
+                    # print(seconds, "seconds")
 
             case "STATE_SPEECH_OUTPUT_NEXT_QUESTION":
                 if not is_speaking:
@@ -88,7 +94,7 @@ def main() -> None:
                 if not is_speaking:
                     # Start a separate thread forcing update animations, because we move on to STATE_QUIT
                     # they won't update like in all the other threads because we get into STATE_QUIT too fast
-                    thread_animations = threading.Thread(target=bot.update_animations,
+                    thread_animations = threading.Thread(target=animations.update_animations,
                                                          args=(is_speaking, False), daemon=True)
                     thread_animations.start()
 
@@ -100,15 +106,15 @@ def main() -> None:
             case "STATE_QUIT":
                 if not is_speaking:
                     executor.shutdown(wait=False)
-                    running = False
+                    is_running = False
 
             case "STATE_WINDOW_QUIT":
                 executor.shutdown(wait=False)
-                running = False
+                is_running = False
 
-        # check if thread is still running and store in is speaking
+        # check if thread is still is_running and store in is speaking
         is_speaking = thread_speech.is_alive()
-        bot.update_animations(is_speaking, current_state == "STATE_SPEECH_INPUT")
+        animations.update_animations(is_speaking, current_state == "STATE_SPEECH_INPUT")
 
     pygame.quit()
     sys.exit()
