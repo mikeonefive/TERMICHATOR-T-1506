@@ -1,8 +1,6 @@
 from api.LLM_API import LLM
-
 from speech_processing.SpeechOutput import SpeechOutput
 from speech_processing.SpeechRecorder import SpeechRecorder
-
 
 class SpeechBot:
 

@@ -27,7 +27,7 @@ class FiniteStateMachine:
                                               args=(speech_bot.greeting_message,), daemon=True)
         self.thread_speech.start()
 
-        animations.update_animations(self.is_speaking, self.is_listening)
+        self.animations.update_animations(self.is_speaking, self.is_listening)
 
 
     # run is like the main method of this class
@@ -70,7 +70,7 @@ class FiniteStateMachine:
 
             # check if speaking thread is still running and store in is_speaking
             self.is_speaking = self.thread_speech.is_alive()
-            self.animations.update_animations(self.is_speaking, self.current_state == "STATE_SPEECH_INPUT")
+            self.animations.update_animations(self.is_speaking, self.current_state == "STATE_GET_SPEECH_INPUT")
 
         pygame.quit()
         sys.exit()
