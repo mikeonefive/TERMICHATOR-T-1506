@@ -2,7 +2,7 @@ from Requirements import time, sys, pygame, threading, ThreadPoolExecutor
 
 from gui.MainWindow import MainWindow
 from gui.Animations import Animations
-from ChatBot import ChatBot
+from SpeechBot import *
 
 
 def main() -> None:
@@ -11,10 +11,17 @@ def main() -> None:
 
     animations = Animations(main_window)    # everything that has to do with mouth animations
 
-    bot = ChatBot()                         # includes speech analysis, speech output and the LLM
+    # instantiate dependencies for the chatbot (speech analysis, speech output and the LLM)
+    llm = LLM()
+    speech_output = SpeechOutput()
+    speech_recorder = SpeechRecorder()
 
-    thread_speech = threading.Thread(target=bot.speech_output.say,
-                                     args=(bot.greeting_message,), daemon=True)
+    # inject dependencies into chatbot
+    speech_bot = SpeechBot(llm=llm, speech_recorder=speech_recorder, speech_output=speech_output)
+
+    # TODO change the threading approach, if possible use a separate class?
+    thread_speech = threading.Thread(target=speech_bot.speech_output.say,
+                                     args=(speech_bot.greeting_message,), daemon=True)
     thread_speech.start()
 
     thread_speech_input = None
@@ -44,7 +51,7 @@ def main() -> None:
                 if not is_speaking:
                     # submit starts the function and returns a future object,
                     # we can't store the entire thread in user_input, just the result
-                    thread_speech_input = executor.submit(bot.speech_recorder.process_speech_input)
+                    thread_speech_input = executor.submit(speech_bot.speech_recorder.process_speech_input)
                     current_state = "STATE_SPEECH_INPUT"
 
             case "STATE_SPEECH_INPUT":
@@ -54,18 +61,20 @@ def main() -> None:
 
             case "STATE_CHECK_INPUT":
                 start_time = time.time()
+                answer_instruction_addition = " Please keep the answer brief."
+
                 if not user_input:
                     current_state = "STATE_SPEECH_INPUT_START"
-                elif user_input.strip() in bot.quit_commands:
+                elif user_input.replace(answer_instruction_addition, "").strip() in speech_bot.quit_commands:
                     current_state = "STATE_BYE"
                 else:
                     current_state = "STATE_GENERATE_ANSWER_START"
 
             case "STATE_GENERATE_ANSWER_START":
-                thread_speech = threading.Thread(target=bot.speech_output.say,
-                                                 args=(bot.waiting_message,), daemon=True)
+                thread_speech = threading.Thread(target=speech_bot.speech_output.say,
+                                                 args=(speech_bot.waiting_message,), daemon=True)
                 thread_speech.start()
-                thread_generate_answer = executor.submit(bot.llm.generate_answer, user_input)
+                thread_generate_answer = executor.submit(speech_bot.llm.generate_answer, user_input)
                 current_state = "STATE_GENERATE_ANSWER"
 
             case "STATE_GENERATE_ANSWER":
@@ -75,7 +84,7 @@ def main() -> None:
 
             case "STATE_SPEECH_OUTPUT_START":
                 if not is_speaking:
-                    thread_speech = threading.Thread(target=bot.speech_output.say, args=(answer,), daemon=True)
+                    thread_speech = threading.Thread(target=speech_bot.speech_output.say, args=(answer,), daemon=True)
                     thread_speech.start()
                     current_state = "STATE_SPEECH_OUTPUT_NEXT_QUESTION"
 
@@ -85,8 +94,8 @@ def main() -> None:
 
             case "STATE_SPEECH_OUTPUT_NEXT_QUESTION":
                 if not is_speaking:
-                    thread_speech = threading.Thread(target=bot.speech_output.say,
-                                                     args=(bot.followup_question,), daemon=True)
+                    thread_speech = threading.Thread(target=speech_bot.speech_output.say,
+                                                     args=(speech_bot.followup_question,), daemon=True)
                     thread_speech.start()
                     current_state = "STATE_SPEECH_INPUT_START"
 
@@ -98,8 +107,8 @@ def main() -> None:
                                                          args=(is_speaking, False), daemon=True)
                     thread_animations.start()
 
-                    thread_speech = threading.Thread(target=bot.speech_output.say,
-                                                     args=(bot.goodbye_message,), daemon=True)
+                    thread_speech = threading.Thread(target=speech_bot.speech_output.say,
+                                                     args=(speech_bot.goodbye_message,), daemon=True)
                     thread_speech.start()
                 current_state = "STATE_QUIT"
 

@@ -14,7 +14,7 @@ class SpeechRecorder:
             self.record_speech.adjust_for_ambient_noise(source)
             recording = self.record_speech.listen(source)
         try:
-            user_input = self.record_speech.recognize_google(recording)
+            user_input = self.record_speech.recognize_google(recording) + " Please keep the answer brief."
             print(user_input)
 
         except speech_recognition.UnknownValueError:
