@@ -1,4 +1,4 @@
-from Requirements import time, sys, pygame, threading, ThreadPoolExecutor
+from main.Requirements import time, sys, pygame, threading, ThreadPoolExecutor
 
 
 class FiniteStateMachine:
@@ -33,7 +33,7 @@ class FiniteStateMachine:
     # run is like the main method of this class and includes the game loop
     def run(self):
         while self.is_running:
-            
+
             self.handle_window_close_event()
 
             match self.current_state:

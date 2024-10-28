@@ -8,7 +8,7 @@ class Animations:
         self.main_window = main_window
 
         # load mouth images into variable
-        self.mouth_images = pygame.image.load('assets/images/spritesheet.png').convert_alpha()
+        self.mouth_images = pygame.image.load('../assets/images/spritesheet.png').convert_alpha()
 
         # what time this initially starts to run at, needed for mouth animation
         self.last_update = pygame.time.get_ticks()
