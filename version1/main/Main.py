@@ -2,8 +2,8 @@ from gui.MainWindow import MainWindow
 from gui.Animations import Animations
 
 from api.LLM_API import LLM
-from bot.SpeechBot import SpeechBot
-from bot.FiniteStateMachine import FiniteStateMachine
+from main.SpeechBot import SpeechBot
+from main.FiniteStateMachine import FiniteStateMachine
 
 from speech_processing.SpeechOutput import SpeechOutput
 from speech_processing.SpeechRecorder import SpeechRecorder
