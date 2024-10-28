@@ -30,9 +30,10 @@ class FiniteStateMachine:
         self.animations.update_animations(self.is_speaking, self.is_listening)
 
 
-    # run is like the main method of this class
+    # run is like the main method of this class and includes the game loop
     def run(self):
         while self.is_running:
+            
             self.handle_window_close_event()
 
             match self.current_state:
