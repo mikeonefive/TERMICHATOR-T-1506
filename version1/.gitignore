@@ -5,8 +5,12 @@
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
-# cache folder pycharm
-__pycache__
+# cache folders pycharm
+__pycache__/
+api/__pycache__/
+constants/__pycache__/
+gui/__pycache__/
+speech_processing/__pycache__/
 
 # credentials & raw images
 api/hf.env
