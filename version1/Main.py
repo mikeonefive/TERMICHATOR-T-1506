@@ -1,7 +1,12 @@
 from gui.MainWindow import MainWindow
 from gui.Animations import Animations
-from SpeechBot import *
-from FiniteStateMachine import FiniteStateMachine
+
+from api.LLM_API import LLM
+from bot.SpeechBot import SpeechBot
+from bot.FiniteStateMachine import FiniteStateMachine
+
+from speech_processing.SpeechOutput import SpeechOutput
+from speech_processing.SpeechRecorder import SpeechRecorder
 
 
 def main() -> None:
